@@ -1,0 +1,12 @@
+--- 
+records: 
+  - 
+    email: test@test.no
+    key: TEMTZpKBxQ26vzk/xs1lXyiwve8nQg3vhj6MlBP06l0=
+    name: test
+    record: record
+    token: token
+    ttl: 600
+    zone: zone
+settings: 
+  interval: 60

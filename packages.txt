@@ -1,0 +1,2 @@
+golang.zx2c4.com/wireguard/wgctrl
+gopkg.in/yaml.v2
