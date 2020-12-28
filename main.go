@@ -18,7 +18,12 @@ func main() {
 	}
 	for _, con := range connections {
 		for _, peers := range con.Peers {
-			fmt.Println(peers.Endpoint)
+			endpoint := peers.Endpoint
+			if endpoint != nil {
+				fmt.Println(endpoint)
+			} else {
+				fmt.Println("No endpoint in connection")
+			}
 		}
 	}
 }
