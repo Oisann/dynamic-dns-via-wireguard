@@ -26,4 +26,4 @@ The interval is how often it will check the tunnel endpoints for a change.
 
 ## Flags
 
-* --config <config-file>
+* --config \<config-file\>
