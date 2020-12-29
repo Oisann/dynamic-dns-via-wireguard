@@ -1,3 +1,4 @@
 wg-ddns
 test.*.conf
 .*.swp
+*config.yml
