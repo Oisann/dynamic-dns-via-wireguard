@@ -13,10 +13,13 @@ var cfg Config
 func main() {
 	var err error
 	cfg = ParseConfig("config.yml")
-	DisplayConfig(&cfg)
 	checkInterval := time.Duration(cfg.Settings.Interval) * time.Second
 
-	// TODO: For each record in the config, get the current dns A-record
+	for i, _ := range cfg.Records {
+		GetRecord(&cfg.Records[i])
+	}
+
+	DisplayConfig(&cfg)
 
 	wg, err = wgctrl.New()
 	if err != nil {
@@ -54,6 +57,6 @@ func check() {
 func detectChange(record *Record, ip string) {
 	if record.LastIP != ip {
 		log.Printf("New IP detected for %s: %s -> %s\n", record.Name, record.LastIP, ip)
-		record.LastIP = ip
+		go UpdateRecord(record, ip)
 	}
 }

@@ -6,7 +6,8 @@ records:
     name: kontor.nihfregionmidt.no
     record: record
     token: token
-    ttl: 600
+    ttl: 1
     zone: zone
+    proxied: false
 settings: 
   interval: 5

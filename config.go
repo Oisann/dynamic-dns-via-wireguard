@@ -23,6 +23,7 @@ type Record struct {
 	TTL int `yaml:"ttl"`
 	Zone string `yaml:"zone"`
 	Record string `yaml:"record"`
+	Proxied bool `yaml:"proxied"`
 	LastIP string
 }
 
@@ -58,6 +59,6 @@ func DisplayConfig(cfg *Config) {
 	fmt.Printf("Check interval: %ds\n", cfg.Settings.Interval)
 	fmt.Printf("Records amount: %d\n", len(cfg.Records))
 	for _, record := range cfg.Records {
-		fmt.Printf("  - %s\n", record.Name)
+		fmt.Printf("  - %s (%s)\n", record.Name, record.LastIP)
 	}
 }
