@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -18,7 +19,7 @@ type UpdateData struct {
 
 // GetRecord will update the last ip variable for a record based on what is already in the DNS
 func GetRecord(record *Record) {
-	url := fmt.Sprintf("https://cloudflare.com/client/v4/zones/%s/dns_records/%s", record.Zone, record.Record)
+	url := fmt.Sprintf("https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s", record.Zone, record.Record)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatalf("Error making request for %s (%s): %e\n", record.Name, url, err)
@@ -33,8 +34,23 @@ func GetRecord(record *Record) {
 		return
 	}
 	defer resp.Body.Close()
-	// TODO: Return the DNS content
-	record.LastIP = record.Name
+	if resp.StatusCode == http.StatusOK {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		var result map[string]interface{}
+		json.Unmarshal(bodyBytes, &result)
+		details := result["result"].(map[string]interface{})
+		currentIP, ok := details["content"].(string)
+		if ok {
+			record.LastIP = currentIP
+		} else {
+			record.LastIP = "N/A"
+		}
+	} else {
+		log.Printf("Got %d when getting DNS records for %s\n", resp.StatusCode, record.Name)
+	}
 }
 
 // UpdateRecord will update the provided record with the provided ip in the DNS
@@ -54,7 +70,7 @@ func UpdateRecord(record *Record, ip string) {
 	}
 	body := bytes.NewReader(payloadBytes)
 
-	url := fmt.Sprintf("https://cloudflare.com/client/v4/zones/%s/dns_records/%s", record.Zone, record.Record)
+	url := fmt.Sprintf("https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s", record.Zone, record.Record)
 	req, err := http.NewRequest("PUT", url, body)
 	if err != nil {
 		log.Fatalf("Error making request for %s (%s): %e\n", record.Name, url, err)
