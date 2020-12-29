@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -50,4 +51,13 @@ func GetRecordWithKey(config *Config, key string) *Record {
 		}
 	}
 	return nil
+}
+
+// DisplayConfig will print a summary of the config provided
+func DisplayConfig(cfg *Config) {
+	fmt.Printf("Check interval: %ds\n", cfg.Settings.Interval)
+	fmt.Printf("Records amount: %d\n", len(cfg.Records))
+	for _, record := range cfg.Records {
+		fmt.Printf("  - %s\n", record.Name)
+	}
 }

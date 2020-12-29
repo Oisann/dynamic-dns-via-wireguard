@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -11,15 +10,10 @@ import (
 var wg *wgctrl.Client
 var cfg Config
 
-func doEvery(d time.Duration, f func()) {
-	for range time.Tick(d) {
-		f()
-	}
-}
-
 func main() {
 	var err error
 	cfg = ParseConfig("config.yml")
+	DisplayConfig(&cfg)
 	checkInterval := time.Duration(cfg.Settings.Interval) * time.Second
 
 	// TODO: For each record in the config, get the current dns A-record
@@ -51,7 +45,7 @@ func check() {
 				ip := endpoint.IP
 				detectChange(record, ip.String())
 			} else {
-				fmt.Println("No endpoint in connection")
+				log.Println("No endpoint in connection")
 			}
 		}
 	}
@@ -59,7 +53,7 @@ func check() {
 
 func detectChange(record *Record, ip string) {
 	if record.LastIP != ip {
-		fmt.Printf("New IP detected! %s -> %s\n", record.LastIP, ip)
+		log.Printf("New IP detected for %s: %s -> %s\n", record.Name, record.LastIP, ip)
 		record.LastIP = ip
 	}
 }
