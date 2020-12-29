@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"time"
 
@@ -9,23 +10,28 @@ import (
 
 var wg *wgctrl.Client
 var cfg Config
+var configFile string
 
-func main() {
-	var err error
-	cfg = ParseConfig("config.yml")
-	checkInterval := time.Duration(cfg.Settings.Interval) * time.Second
+func init() {
+	flag.StringVar(&configFile, "config", "config.yml", "Specify config file")
+	flag.Parse()
+	cfg = ParseConfig(configFile)
 
 	for i, _ := range cfg.Records {
 		GetRecord(&cfg.Records[i])
 	}
 
 	DisplayConfig(&cfg)
-
+	var err error
 	wg, err = wgctrl.New()
 	if err != nil {
 		log.Fatalf("Unable to create client: %e\n", err)
 	}
+}
+
+func main() {
 	check()
+	checkInterval := time.Duration(cfg.Settings.Interval) * time.Second
 	for range time.Tick(checkInterval) {
 		check()
 	}
